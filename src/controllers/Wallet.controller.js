@@ -80,7 +80,7 @@ const addBalance = asyncHandler( async (req,res) => {
     wallet.totalBalance += amountToAdd
     wallet.remainingBalance += amountToAdd
 
-    await wallet.save({validateBeforSave: false})
+    await wallet.save({validateBeforeSave: false})
 
     
     return res
@@ -90,6 +90,47 @@ const addBalance = asyncHandler( async (req,res) => {
             200,
             wallet,
             "Balance added sucessfully!"
+        )
+    )
+
+})
+
+const addBalanceAndChangeDate = asyncHandler( async (req, res) => {
+    const amountToAdd= Number(req.body.amountToAdd)
+    const date = new Date(req.body.date)
+    date.setHours(0, 0, 0, 0);
+    
+    if (isNaN(amountToAdd)) {
+        throw new ApiError(400, "Invalid amount");
+    }
+    if (isNaN(date.getTime())) {
+        throw new ApiError(400, "Invalid date");
+    }
+
+    const userID = req.user._id
+    if(!userID){
+        throw new ApiError(400, "user id not found!")
+    }
+
+    const wallet = await Wallet.findOne({userID: userID})
+    if(!wallet){
+        throw new ApiError(400, "Wallet not found!")
+    }
+
+    wallet.totalBalance += amountToAdd
+    wallet.remainingBalance += amountToAdd
+    wallet.goalDate = date
+
+
+    await wallet.save({ validateBeforeSave: false})
+
+    return res
+    .status(200)
+    .json(
+        new ApiResponse(
+            200,
+            wallet,
+            "Balance added and date changed sucessfully!"
         )
     )
 
@@ -123,4 +164,4 @@ const clearWallet = asyncHandler( async (req,res) => {
 
 
 
-export { walletInit, addBalance, clearWallet}
+export { walletInit, addBalance, addBalanceAndChangeDate, clearWallet}
