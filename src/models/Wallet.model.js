@@ -44,5 +44,37 @@ walletSchema.pre('save', function (next) {
 })
 
 
+// walletSchema.pre('findOneAndUpdate', async function (next) {
+//     const update = this.getUpdate();
+//     const userID = this.getQuery().userID;
+//     const doc = await this.model.findOne({ userID });
+
+//     if (!doc) return next();
+
+//     const currentRemaining = doc.remainingBalance || 0;
+//     const incRemaining = update?.$inc?.remainingBalance || 0;
+//     const newRemaining = currentRemaining + incRemaining;
+
+//     const rawGoalDate = update?.$set?.goalDate || doc.goalDate;
+//     if (rawGoalDate) {
+//         const today = new Date();
+//         today.setHours(0, 0, 0, 0);
+
+//         const goalDate = new Date(rawGoalDate);
+//         goalDate.setHours(0, 0, 0, 0);
+
+//         const daysRemaining = Math.ceil((goalDate - today) / (1000 * 60 * 60 * 24));
+//         const dailyLimit = daysRemaining > 0 ? newRemaining / daysRemaining : 0;
+
+//         update.$set ??= {};
+//         update.$set.dailyLimit = dailyLimit;
+
+//         this.setUpdate(update);
+//     }
+
+//     next();
+// });
+
+
 
 export const Wallet = mongoose.model("Wallet", walletSchema)

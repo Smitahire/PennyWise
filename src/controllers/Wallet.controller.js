@@ -9,6 +9,7 @@ const walletInit = asyncHandler( async (req,res) => {
     // get data from req.body
 
     const {totalBalance, goalDate} = req.body
+    goalDate.setHours(0, 0, 0, 0);
     if(!totalBalance || !goalDate){
         throw new ApiError(400, "Provide valid input !")
     }
@@ -70,24 +71,56 @@ const addBalance = asyncHandler( async (req,res) => {
         throw new ApiError(400, "user id not found!")
     }
 
-    const wallet = await Wallet.findOneAndUpdate({userID: userID}, 
-        { $inc: { totalBalance : amountToAdd , remainingBalance: amountToAdd} }, { new: true } )
-    
-    console.log(wallet);
-    
-    
+    // const wallet = await Wallet.findOneAndUpdate({userID: userID}, 
+    //     { $inc: { totalBalance : amountToAdd , remainingBalance: amountToAdd} }, { new: true, runValidators: true,
+    // context: 'query'  } )
 
+    const wallet = await Wallet.findOne({userID: userID})
 
+    wallet.totalBalance += amountToAdd
+    wallet.remainingBalance += amountToAdd
+
+    await wallet.save({validateBeforSave: false})
 
     
+    return res
+    .status(200)
+    .json(
+        new ApiResponse(
+            200,
+            wallet,
+            "Balance added sucessfully!"
+        )
+    )
 
 })
 
 const clearWallet = asyncHandler( async (req,res) => {
 
+    const userID = req.user._id
+    if(!userID){
+        throw new ApiError(400, "user id not found!")
+    }
+
+    const wallet = await Wallet.findOneAndUpdate({userID: userID}, 
+        { $set: { totalBalance : 0 , remainingBalance: 0, goalDate: null, dailyLimit: 0 } }, { new: true, runValidators: true,
+    context: 'query'  } )
+
+    return res
+    .status(200)
+    .json(
+        new ApiResponse(
+            200,
+            wallet,
+            "wallet cleared sucessfully !"
+        )
+    )
+
 })
 
 
 
 
-export { walletInit, addBalance}
+
+
+export { walletInit, addBalance, clearWallet}
