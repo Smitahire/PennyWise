@@ -59,7 +59,7 @@ const walletInit = asyncHandler( async (req,res) => {
 
 const addBalance = asyncHandler( async (req,res) => {
 
-    const amountToAdd = req.body.amountToAdd
+    const amountToAdd = Number(req.body.amountToAdd)
     
     if (isNaN(amountToAdd)) {
         throw new ApiError(400, "Invalid amount");
@@ -159,9 +159,28 @@ const clearWallet = asyncHandler( async (req,res) => {
 
 })
 
+const getWalletData = asyncHandler( async (req, res) => {
+    const userID = req.user._id
+    if(!userID){
+        throw new ApiError(400, "user id not found!")
+    }
+    const wallet = await Wallet.findOne({userID: userID})
+    if(!wallet){
+        throw new ApiError(400, "Not able to fetch wallet!")
+    }
+    return res
+    .status(200)
+    .json(
+        new ApiResponse(
+            200,
+            wallet,
+            "Retrived data !"
+        )
+    )
+})
 
 
 
 
 
-export { walletInit, addBalance, addBalanceAndChangeDate, clearWallet}
+export { walletInit, addBalance, addBalanceAndChangeDate, clearWallet, getWalletData}
