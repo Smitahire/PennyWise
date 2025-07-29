@@ -11,7 +11,8 @@ const expenseSchema = mongoose.Schema(
         },
         walletID: {
             type: mongoose.Schema.Types.ObjectId,
-            ref: Wallet
+            ref: Wallet,
+            require: True,
         },
         title: {
             type: String,
@@ -29,11 +30,8 @@ const expenseSchema = mongoose.Schema(
             type: Number,
             require: true,
         },
-        date: {
-            type: date,
-            require: true,
-        }
-    }
+    },
+    {timestamps:True}
 )
 
 

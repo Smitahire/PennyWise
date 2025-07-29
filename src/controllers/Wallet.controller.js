@@ -14,11 +14,13 @@ const walletInit = asyncHandler( async (req,res) => {
         throw new ApiError(400, "Provide valid input !")
     }
     
+
     // get data about user from req.user through midddlewear(verifyJWT)
     const userID = req.user._id
     if(!userID){
         throw new ApiError(400, "user id not found!")
     }
+
 
     // one user can have only one wallet // no double userID
     const walletExist = await User.findOne(userID).select("-password")
