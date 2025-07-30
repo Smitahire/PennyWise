@@ -18,7 +18,7 @@ import expenseRouter from "./routes/Expense.router.js"
 
 app.use("/api/v1/user", userRouter)
 app.use("/api/v1/wallet", walletRouter)
-app.use("/expense", expenseRouter)
+app.use("/api/v1/expense", expenseRouter)
 
 
 export { app }

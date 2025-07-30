@@ -1,5 +1,6 @@
 
 import { User } from "../models/User.model.js";
+import { Wallet } from "../models/Wallet.model.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import {asyncHandler} from "../utils/asyncHandler.js";
@@ -31,6 +32,31 @@ const generateAccessAndRefreshToken = async (_id) => {
         return {accessToken,refreshToken}
     } catch (error) {
         throw new ApiError(500, "something went wrong while generating refresh and access token")
+    }
+
+}
+
+const createWallet = async (userID) => {
+    
+    try {
+        const walletExist = await Wallet.findOne({userID:userID})
+        if(walletExist){
+            throw new ApiError(400, "Wallet alredy Exist!")
+        }
+    
+        const wallet = await Wallet.create({
+            totalBalance: 0,
+            goalDate: null,
+            userID,
+        })
+    
+        if (!wallet) {
+            throw new ApiError(400, "Wallet not initialized!");
+        }
+    
+        return wallet;
+    } catch (error) {
+        console.log("Error: ",error)
     }
 
 }
@@ -73,11 +99,18 @@ const registerUser = asyncHandler(async (req, res) => {
         throw new ApiError(501, "user not created!")
     }
 
+    // create wallet
+
+    const userID = createdUser._id
+
+    const wallet = await createWallet(userID)
+
+
     // return response
     return res
     .status(200)
     .json(
-        new ApiResponse(200, createdUser, "user crated succesfully")
+        new ApiResponse(200, createdUser, "user created succesfully")
     ) 
 })
 

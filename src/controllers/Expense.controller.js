@@ -12,7 +12,7 @@ const createExpense = asyncHandler(async (req, res)=> {
         throw new ApiError(400, "Incomplete response, Enter all fields!")
     }
 
-    const userID = req.user
+    const userID = req.user._id
 
     const wallet = await Wallet.findOne({userID:userID})
 
@@ -21,7 +21,10 @@ const createExpense = asyncHandler(async (req, res)=> {
     }
 
     const walletID = wallet._id
-    
+
+    if(parsedAmount > wallet.remainingBalance){
+        throw new ApiError(400, "Not enough balance!")
+    }
 
     // update expense in wallet 
     wallet.remainingBalance -= parsedAmount
@@ -52,6 +55,34 @@ const createExpense = asyncHandler(async (req, res)=> {
         )
     )
 
+    
+})
+
+const getExpenseHistory = asyncHandler(async (req, res) => {
+
+    const userID = req.user._id
+    const wallet = await Wallet.findOne({userID:userID})
+
+    if(wallet){
+        throw new ApiError(404, "Wallet not found!")
+    }
+
+    const walletID = wallet._id
+
+    const expenses = await Expense.find({
+        walletID
+    })
+
+    res.status(200).json(
+        new ApiResponse(
+            200,
+            expenses,
+            "all expenses!"
+        )
+    )
+})
+
+const deleteExpense = asyncHandler( async (req, res) => {
     
 })
 
