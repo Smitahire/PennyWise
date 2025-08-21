@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 import { User } from "./User.model.js";
-import { Wallet } from "./Wallet.model.js";
+import { Wallet }  from "./Wallet.model.js";
 
 const expenseSchema = mongoose.Schema(
     {
@@ -12,7 +12,7 @@ const expenseSchema = mongoose.Schema(
         walletID: {
             type: mongoose.Schema.Types.ObjectId,
             ref: Wallet,
-            require: True,
+            require: true,
         },
         title: {
             type: String,
@@ -31,7 +31,7 @@ const expenseSchema = mongoose.Schema(
             require: true,
         },
     },
-    {timestamps:True}
+    {timestamps:true}
 )
 
 

@@ -1,5 +1,5 @@
 import {Expense} from '../models/Expense.model.js';
-import { Wallet } from '../models/Wallet.model.js';
+import { Wallet }  from '../models/Wallet.model.js';
 import { ApiError } from '../utils/ApiError.js';
 import { ApiResponse } from '../utils/ApiResponse.js';
 import { asyncHandler } from '../utils/asyncHandler.js';
